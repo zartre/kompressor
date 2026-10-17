@@ -1,0 +1,12 @@
+[package]
+name = "kompressor"
+version = "0.1.0"
+edition = "2021"
+description = "Cross-platform image compressor"
+
+[dependencies]
+gpui = "0.2.2"
+libcaesium = "0.21"
+
+[patch.crates-io]
+xattr = { path = "vendor/xattr-0.2.3" }
