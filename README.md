@@ -1,5 +1,8 @@
 # Kompressor
 
+> [!note]
+> This development release has been tested only on Windows.
+
 Kompressor is a cross-platform image compression application for
 macOS, Linux and Windows built using Rust.
 
