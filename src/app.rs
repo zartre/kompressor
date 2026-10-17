@@ -132,6 +132,7 @@ impl Kompressor {
         let header = div()
             .flex()
             .flex_row()
+            .gap_1()
             .px_3()
             .py_1()
             .text_xs()
@@ -140,7 +141,7 @@ impl Kompressor {
             .border_color(theme.border)
             .child(div().flex_1().child("Name"))
             .child(div().w(px(72.)).child("Original"))
-            .child(div().w(px(72.)).child("Output"));
+            .child(div().w(px(80.)).child("Output"));
 
         if self.items.is_empty() {
             return div()
@@ -224,7 +225,11 @@ impl Kompressor {
                             .size(px(12.))
                             .rounded_full()
                             .border_1()
-                            .border_color(if is_selected { theme.accent } else { theme.border })
+                            .border_color(if is_selected {
+                                theme.accent
+                            } else {
+                                theme.border
+                            })
                             .flex()
                             .items_center()
                             .justify_center()
@@ -235,7 +240,11 @@ impl Kompressor {
                     .child(
                         div()
                             .text_xs()
-                            .text_color(if is_selected { theme.text } else { theme.text_muted })
+                            .text_color(if is_selected {
+                                theme.text
+                            } else {
+                                theme.text_muted
+                            })
                             .child(format.label()),
                     )
             }))
@@ -360,7 +369,7 @@ impl Render for Kompressor {
                 this.handle_dropped_paths(paths.paths(), cx);
             }))
             .drag_over::<ExternalPaths>(move |style, _, _, _| {
-                style.bg(theme.accent.opacity(0.08))
+                style.bg(theme.background.opacity(0.8))
             })
             .child(self.render_drop_zone(theme, cx))
             .child(self.render_status_bar(theme, cx))
@@ -383,6 +392,8 @@ fn render_row(item: &ImageItem, theme: Theme, ix: usize) -> impl IntoElement {
         .id(("image-row", ix))
         .flex()
         .flex_row()
+        .gap_1()
+        .w_full()
         .px_3()
         .py_1()
         .bg(if ix.is_multiple_of(2) {
@@ -398,12 +409,7 @@ fn render_row(item: &ImageItem, theme: Theme, ix: usize) -> impl IntoElement {
                 .child(SharedString::from(item.file_name.clone())),
         )
         .child(div().w(px(72.)).child(format_size(item.original_size)))
-        .child(
-            div()
-                .w(px(72.))
-                .text_color(output_color)
-                .child(output_text),
-        )
+        .child(div().w(px(80.)).text_color(output_color).child(output_text))
 }
 
 /// Renders a modal popup that overlays the whole window to show an error
@@ -441,21 +447,23 @@ fn render_error_popup(
                         .child("Error"),
                 )
                 .child(div().text_xs().child(message))
-                .child(div().flex().justify_end().child(
-                    div()
-                        .id("error-ok")
-                        .px_3()
-                        .py_1()
-                        .rounded_sm()
-                        .bg(theme.accent)
-                        .text_color(gpui::white())
-                        .text_xs()
-                        .cursor_pointer()
-                        .on_click(cx.listener(|this, _event, _window, cx| {
-                            this.error_message = None;
-                            cx.notify();
-                        }))
-                        .child("OK"),
-                )),
+                .child(
+                    div().flex().justify_end().child(
+                        div()
+                            .id("error-ok")
+                            .px_3()
+                            .py_1()
+                            .rounded_sm()
+                            .bg(theme.accent)
+                            .text_color(gpui::white())
+                            .text_xs()
+                            .cursor_pointer()
+                            .on_click(cx.listener(|this, _event, _window, cx| {
+                                this.error_message = None;
+                                cx.notify();
+                            }))
+                            .child("OK"),
+                    ),
+                ),
         )
 }
