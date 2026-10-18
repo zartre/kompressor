@@ -2,9 +2,9 @@ name: Rust
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 env:
   CARGO_HOME: ~/.cargo
@@ -12,31 +12,30 @@ env:
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
 
-    - name: Install Rust
-      uses: dtolnay/rust-toolchain@stable
-      with:
-        targets: x86_64-pc-windows-msvc
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
 
-    - name: Cache
-      uses: actions/cache@v5.1.0
-      with:
-        path: |
-          ${{ env.CARGO_HOME }}/registry
-          ${{ env.CARGO_HOME }}/git
-          target
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Cache
+        uses: actions/cache@v5.1.0
+        with:
+          path: |
+            ${{ env.CARGO_HOME }}/registry
+            ${{ env.CARGO_HOME }}/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Build
-      run: cargo build --release --verbose --target x86_64-pc-windows-msvc
+      - name: Build
+        run: cargo build --release --verbose --target x86_64-pc-windows-msvc
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v7.0.2
-      with:
-        name: kompressor
-        path: target/x86_64-pc-windows-msvc/release/*.exe
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: kompressor
+          path: target/x86_64-pc-windows-msvc/release/*.exe
