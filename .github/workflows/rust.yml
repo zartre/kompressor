@@ -11,7 +11,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
+  build_windows:
     runs-on: windows-latest
 
     steps:
@@ -37,5 +37,36 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7.0.2
         with:
-          name: kompressor
+          name: kompressor-windows
           path: target/x86_64-pc-windows-msvc/release/*.exe
+
+  build_mac:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin
+
+      - name: Cache
+        uses: actions/cache@v5.1.0
+        with:
+          path: |
+            ${{ env.CARGO_HOME }}/registry
+            ${{ env.CARGO_HOME }}/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build
+        run: cargo build --release --verbose --target aarch64-apple-darwin
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: kompressor-mac
+          path: target/aarch64-apple-darwin/release/*
+
+      # TODO: Bundle into a double-clickable app
