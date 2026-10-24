@@ -60,13 +60,24 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
+      - name: Write cert
+        env:
+          BUNDLE_CERT_BASE64: ${{ secrets.BUNDLE_CERT_BASE64 }}
+        run: |
+          mkdir secrets
+          echo $BUNDLE_CERT_BASE64 | base64 -d | tr ' ' '\n' > secrets/kompressor.p12
+
       - name: Build
         run: cargo build --release --verbose --target aarch64-apple-darwin
+
+      - name: Bundle
+        env:
+          APPLE_SIGNING_PASSWORD: ${{ secrets.APPLE_SIGNING_PASSWORD }}
+        run: cargo bundle --release --binary-path target/aarch64-apple-darwin/release/kompressor
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7.0.2
         with:
           name: kompressor-mac
-          path: target/aarch64-apple-darwin/release/kompressor
+          path: target/aarch64-apple-darwin/release/bundle/dmg/Kompressor.dmg
 
-      # TODO: Bundle into a double-clickable app
