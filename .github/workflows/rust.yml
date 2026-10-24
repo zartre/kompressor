@@ -60,6 +60,9 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
+      - name: Install cargo-bundle
+        run: cargo install cargo-bundle
+
       - name: Write cert
         env:
           BUNDLE_CERT_BASE64: ${{ secrets.BUNDLE_CERT_BASE64 }}
