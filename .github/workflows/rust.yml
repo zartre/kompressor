@@ -73,7 +73,6 @@ jobs:
       - name: Write cert
         env:
           BUNDLE_CERT_BASE64: ${{ secrets.BUNDLE_CERT_BASE64 }}
-          LC_CTYPE: C
         run: |
           mkdir secrets
           echo $BUNDLE_CERT_BASE64 | base64 -d > secrets/kompressor.p12
