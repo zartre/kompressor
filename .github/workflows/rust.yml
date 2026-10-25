@@ -8,6 +8,7 @@ on:
 
 env:
   CARGO_HOME: ~/.cargo
+  CARGO_BUNDLE_VERSION: 0.12.0
   CARGO_TERM_COLOR: always
 
 jobs:
@@ -55,13 +56,19 @@ jobs:
         uses: actions/cache@v5.1.0
         with:
           path: |
+            ${{ env.CARGO_HOME }}/bin
             ${{ env.CARGO_HOME }}/registry
             ${{ env.CARGO_HOME }}/git
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install cargo-bundle
-        run: cargo install cargo-bundle
+        run: |
+          if [ ! -x "${{ env.CARGO_HOME }}/bin/cargo-bundle" ]; then
+            cargo install cargo-bundle --version "${{ env.CARGO_BUNDLE_VERSION }}"
+          else
+            echo "Using cached cargo-bundle"
+          fi
 
       - name: Write cert
         env:
@@ -84,4 +91,3 @@ jobs:
         with:
           name: kompressor-mac
           path: target/release/bundle/dmg/Kompressor.dmg
-
