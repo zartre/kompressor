@@ -8,6 +8,7 @@ on:
 
 env:
   CARGO_HOME: ~/.cargo
+  CARGO_BUNDLE_VERSION: 0.12.0
   CARGO_TERM_COLOR: always
 
 jobs:
@@ -55,18 +56,38 @@ jobs:
         uses: actions/cache@v5.1.0
         with:
           path: |
+            ${{ env.CARGO_HOME }}/bin
             ${{ env.CARGO_HOME }}/registry
             ${{ env.CARGO_HOME }}/git
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
+      - name: Install cargo-bundle
+        run: |
+          if [ ! -x "${{ env.CARGO_HOME }}/bin/cargo-bundle" ]; then
+            cargo install cargo-bundle --version "${{ env.CARGO_BUNDLE_VERSION }}"
+          else
+            echo "Using cached cargo-bundle"
+          fi
+
+      - name: Write cert
+        env:
+          BUNDLE_CERT_BASE64: ${{ secrets.BUNDLE_CERT_BASE64 }}
+          LC_CTYPE: C
+        run: |
+          mkdir secrets
+          echo $BUNDLE_CERT_BASE64 | base64 -d > secrets/kompressor.p12
+
       - name: Build
         run: cargo build --release --verbose --target aarch64-apple-darwin
+
+      - name: Bundle
+        env:
+          APPLE_SIGNING_PASSWORD: ${{ secrets.APPLE_SIGNING_PASSWORD }}
+        run: cargo bundle --release --binary-path target/aarch64-apple-darwin/release/kompressor
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7.0.2
         with:
           name: kompressor-mac
-          path: target/aarch64-apple-darwin/release/kompressor
-
-      # TODO: Bundle into a double-clickable app
+          path: target/release/bundle/dmg/Kompressor.dmg

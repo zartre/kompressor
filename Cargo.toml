@@ -1,8 +1,15 @@
 [package]
 name = "kompressor"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 description = "Cross-platform image compressor"
+
+[package.metadata.bundle]
+name = "Kompressor"
+icon = ["icons/16x16.png", "icons/32x32.png", "icons/64x64.png", "icons/128x128.png", "icons/512x512.png" ]
+identifier = "com.zartre.app.kompressor"
+apple_signing_p12 = "secrets/kompressor.p12"
+apple_signing_password_env = "APPLE_SIGNING_PASSWORD"
 
 [dependencies]
 gpui = "0.2.2"
