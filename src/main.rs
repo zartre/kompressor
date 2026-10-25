@@ -13,7 +13,7 @@ use gpui::{
 
 use app::Kompressor;
 
-actions!(Kompressor, [Close, Quit]);
+actions!(Kompressor, [Close, Minimize, Quit]);
 
 fn main() {
     Application::new().run(|cx: &mut App| {
@@ -44,8 +44,9 @@ fn main() {
 
 fn register_shortcuts(cx: &mut App) {
     cx.bind_keys([
-        KeyBinding::new("cmd-q", Quit, None),
         KeyBinding::new("cmd-w", Close, None),
+        KeyBinding::new("cmd-m", Minimize, None),
+        KeyBinding::new("cmd-q", Quit, None),
     ]);
     cx.on_action(|_: &Quit, cx| cx.quit());
 }

@@ -8,7 +8,7 @@ use crate::compression::{self, registry::CompressorRegistry, CompressionError};
 use crate::format::{InputFormat, OutputFormat};
 use crate::image_item::{ImageItem, ProcessingStatus};
 use crate::theme::Theme;
-use crate::Close;
+use crate::{Close, Minimize};
 
 /// The root view for the Kompressor application.
 pub struct Kompressor {
@@ -135,6 +135,7 @@ impl Render for Kompressor {
 
         div()
             .on_action(|_: &Close, window, _| window.remove_window())
+            .on_action(|_: &Minimize, window, _| window.minimize_window())
             .track_focus(&self.focus_handler)
             .size_full()
             .flex()
