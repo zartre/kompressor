@@ -2,15 +2,17 @@ mod view;
 
 use std::path::PathBuf;
 
-use gpui::{div, prelude::*, Context, ExternalPaths, Render, Subscription, Window};
+use gpui::{div, prelude::*, Context, ExternalPaths, FocusHandle, Render, Subscription, Window};
 
 use crate::compression::{self, registry::CompressorRegistry, CompressionError};
 use crate::format::{InputFormat, OutputFormat};
 use crate::image_item::{ImageItem, ProcessingStatus};
 use crate::theme::Theme;
+use crate::Close;
 
 /// The root view for the Kompressor application.
 pub struct Kompressor {
+    focus_handler: FocusHandle,
     items: Vec<ImageItem>,
     next_id: usize,
     output_format: OutputFormat,
@@ -26,8 +28,11 @@ impl Kompressor {
         let appearance_observer = window.observe_window_appearance(move |_window, cx| {
             weak.update(cx, |_, cx| cx.notify()).ok();
         });
+        let focus_handle = cx.focus_handle();
+        focus_handle.focus(window);
 
         Self {
+            focus_handler: focus_handle,
             items: Vec::new(),
             next_id: 0,
             output_format: OutputFormat::ALL[0],
@@ -129,6 +134,8 @@ impl Render for Kompressor {
         let error_message = self.error_message.clone();
 
         div()
+            .on_action(|_: &Close, window, _| window.remove_window())
+            .track_focus(&self.focus_handler)
             .size_full()
             .flex()
             .flex_col()

@@ -13,7 +13,7 @@ use gpui::{
 
 use app::Kompressor;
 
-actions!(Kompressor, [Quit]);
+actions!(Kompressor, [Close, Quit]);
 
 fn main() {
     Application::new().run(|cx: &mut App| {
@@ -31,14 +31,21 @@ fn main() {
         )
         .unwrap();
 
-        cx.activate(true);
+        register_shortcuts(cx);
 
-        cx.bind_keys([KeyBinding::new("cmd-q", Quit, None)]);
-        cx.on_action(|_: &Quit, cx| cx.quit());
+        cx.activate(true);
 
         cx.set_menus(vec![Menu {
             name: "Kompressor".into(),
             items: vec![MenuItem::action("Quit", Quit)],
         }]);
     });
+}
+
+fn register_shortcuts(cx: &mut App) {
+    cx.bind_keys([
+        KeyBinding::new("cmd-q", Quit, None),
+        KeyBinding::new("cmd-w", Close, None),
+    ]);
+    cx.on_action(|_: &Quit, cx| cx.quit());
 }
