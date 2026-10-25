@@ -7,11 +7,13 @@ mod image_item;
 mod theme;
 
 use gpui::{
-    px, size, App, AppContext as _, Application, Bounds, TitlebarOptions, WindowBounds,
-    WindowOptions,
+    actions, px, size, App, AppContext as _, Application, Bounds, KeyBinding, Menu, MenuItem,
+    TitlebarOptions, WindowBounds, WindowOptions,
 };
 
 use app::Kompressor;
+
+actions!(Kompressor, [Quit]);
 
 fn main() {
     Application::new().run(|cx: &mut App| {
@@ -30,5 +32,13 @@ fn main() {
         .unwrap();
 
         cx.activate(true);
+
+        cx.bind_keys([KeyBinding::new("cmd-q", Quit, None)]);
+        cx.on_action(|_: &Quit, cx| cx.quit());
+
+        cx.set_menus(vec![Menu {
+            name: "Kompressor".into(),
+            items: vec![MenuItem::action("Quit", Quit)],
+        }]);
     });
 }
