@@ -1,5 +1,7 @@
 # Kompressor
 
+<img src="./icons/128x128.png" width="64"/>
+
 Kompressor is a cross-platform image compression application for
 macOS, Linux and Windows built using Rust.
 
